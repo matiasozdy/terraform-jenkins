@@ -3,7 +3,7 @@ node {
     stage 'Checkout'
  
     // // Get terraform repo
-    git credentialsId: '', url: 'ssh://matiasozdy@github.com/tools.git', branch: 'terraform'
+    git credentialsId: '', url: 'https://github.com/matiasozdy/terraform-jenkins.git', branch: 'master'
  
     // Get the Terraform tool.
     def workdir = "terraform/modules/${env}/${app}"
