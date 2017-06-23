@@ -19,7 +19,7 @@ In the tools folder there are some scripts to generate the environment based on 
     - modules
         - core
             - nginx
-    - ops
+        - ops
             - Some ops service
     - product
             - Some product service
