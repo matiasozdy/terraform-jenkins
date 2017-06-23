@@ -10,6 +10,7 @@ Run jenkins with the provided run.sh on the jenkins folder.
 Generate corresponding buckets in your aws account
 
 ## Defining the infrastructure
+#### Some words
 I've used separated tfstates for each terraform project on a bucket per environment, it's something I don't agree 100%  but it works quite right for now.
 In the tools folder there are some scripts to generate the environment based on the defined modules.
 
@@ -38,7 +39,6 @@ In the tools folder there are some scripts to generate the environment based on 
             - vpc
     
     - tools
-
 
 ## Usage
 TBD
