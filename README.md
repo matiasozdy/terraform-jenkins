@@ -13,8 +13,9 @@ Generate corresponding buckets in your aws account
 I've used separated tfstates for each terraform project on a bucket per environment, it's something I don't agree 100%  but it works quite right for now.
 In the tools folder there are some scripts to generate the environment based on the defined modules.
 
-## Structure:
-terraform
+## Structure
+
+- terraform
     - modules
         - core
             - nginx
