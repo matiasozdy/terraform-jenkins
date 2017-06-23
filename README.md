@@ -22,10 +22,10 @@ In the tools folder there are some scripts to generate the environment based on 
             - nginx
         - ops
             - Some ops service
-    
-    - product
-        - Some product service
-    
+
+        - product
+            - Some product service
+
     - environments (Dev)
         - common-services
             - cache
@@ -38,9 +38,9 @@ In the tools folder there are some scripts to generate the environment based on 
             - secgroups
             - subnets
             - vpc
-    
+
     - tools
 
 
 ## Usage
-TBD
+http://localhost:8080 and install Jenkins.
