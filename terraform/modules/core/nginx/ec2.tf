@@ -47,6 +47,14 @@ resource "aws_instance" "nerdearla" {
 provisioner "file" {
     source      = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"
+    connection {
+        host = "${self.public_ip}"
+        type = "ssh"
+        user = ""
+        private_key = "${file("")}"
+      }
+  
+
   }
 
   provisioner "remote-exec" {
@@ -54,5 +62,11 @@ provisioner "file" {
       "chmod +x /tmp/bootstrap.sh",
       "/tmp/bootstrap.sh",
     ]
+    connection {
+        host = "${self.public_ip}"
+        type = "ssh"
+        user = ""
+        private_key = "${file("")}"
+      }
   }     
 }
