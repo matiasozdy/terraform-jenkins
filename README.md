@@ -21,20 +21,23 @@ In the tools folder there are some scripts to generate the environment based on 
             - nginx
         - ops
             - Some ops service
+    
     - product
             - Some product service
+    
     - environments (Dev)
-            - common-services
-                - cache
-                - databases
-            - filesystems
-            - network
-                - acl
-                - balancers
-                - inetgw
-                - secgroups
-                - subnets
-                - vpc
+        - common-services
+            - cache
+            - databases
+        - filesystems
+        - network
+            - acl
+            - balancers
+            - inetgw
+            - secgroups
+            - subnets
+            - vpc
+    
     - tools
 
 
