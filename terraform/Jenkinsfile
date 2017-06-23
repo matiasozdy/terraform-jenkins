@@ -1,0 +1,73 @@
+node {
+    
+    stage 'Checkout'
+ 
+    // // Get terraform repo
+    git credentialsId: '', url: 'ssh://matiasozdy@github.com/tools.git', branch: 'terraform'
+ 
+    // Get the Terraform tool.
+    def workdir = "terraform/modules/${env}/${app}"
+    def tfHome = tool name: 'Terraform', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+    env.PATH = "${tfHome}:${env.PATH}"
+    // Take out this!
+    env.AWS_ACCESS_KEY_ID=""
+    env.AWS_SECRET_ACCESS_KEY=""
+    env.AWS_DEFAULT_REGION="us-east-1"
+    //
+    dir("${workdir}") {
+    wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
+    
+            // Mark the code build 'plan'....
+            stage name: 'Plan', concurrency: 1
+            // Output Terraform version
+            sh "terraform --version"
+            
+            if (fileExists("status")) {
+                sh "rm status"
+            }
+            sh "terraform get"
+            sh "set +e; terraform plan -out=plan.out -detailed-exitcode; echo \$? > status" 
+            def exitCode = readFile('status').trim()
+            def apply = false
+            echo "Terraform Plan Exit Code: ${exitCode}"
+            if (exitCode == "0") {
+                currentBuild.result = 'SUCCESS'
+            }
+            if (exitCode == "1") {
+                slackSend channel: '#tform', color: '#0080ff', message: "Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                currentBuild.result = 'FAILURE'
+            }
+            if (exitCode == "2") {
+                stash name: "plan", includes: "plan.out"
+                slackSend channel: '#tform', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                try {
+                    input message: 'Apply Plan?', ok: 'Apply'
+                    apply = true
+                } catch (err) {
+                    slackSend channel: '#tform', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    apply = false
+                    //currentBuild.result = 'UNSTABLE'
+                    currentBuild.result = 'SUCCESS'
+                }
+            }
+ 
+            if (apply) {
+                stage name: 'Apply', concurrency: 1
+                unstash 'plan'
+                if (fileExists("status.apply")) {
+                    sh "rm status.apply"
+                }
+                sh 'set +e; terraform apply plan.out; echo \$? > status.apply'
+
+                sh 'echo "running plan"'
+                def applyExitCode = readFile('status.apply').trim()
+                if (applyExitCode == "0") {
+                    slackSend channel: '#tform', color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
+                } else {
+                    slackSend channel: '#tform', color: 'danger', message: "Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    currentBuild.result = 'FAILURE'
+                }
+            }
+    }
+        }
+}
